@@ -1,2 +1,2 @@
-# vsdworkshop
+# DIGITAL-VLSI-SOC-DESIGN-AND-PLANNING
 
