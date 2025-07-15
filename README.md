@@ -61,7 +61,7 @@ This example clearly demonstrates how a high-level application concept like a st
 
  ## <h1 id="header-1_2">Soc design and OpenLANE</h1>
 ### <h1 id="header-1_2_1">Introduction to all components of open-source digital asic design</h1>
-![digital_asic_flow](day%2001/digital_asic_flow.jpeg)
+![digital_asic_flow](day%2001/digital_asic_flow.png)
 
 To design Digital ASIC, few tools or things which are required from the day one. These are
 
