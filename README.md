@@ -268,8 +268,7 @@ After completing the preparation, in the picorv32a file, the run terictory is cr
 
 In the tmp file, merged.lef file is available which was created in preparation time. if we open this merged.lef file, we get all the wire or layer level and cell level information.
 
-
-![[Pasted image 20250714181854.png]]
+!(mergedlef)[day%2001/mergedlef.png]
 
 While, in the result folder is empty because till we have not run anything and in the report folder all the folders are there about synthesis, placement, floorplanning,cts,routing,magic,lvs.
 
