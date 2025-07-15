@@ -48,7 +48,7 @@ The OS manages fundamental tasks such as input/output (I/O) operations, memory a
 This binary data is then sent to the hardware, which executes the received functions and generates the corresponding output. Essentially, instructions serve as an abstract interface between high-level programming languages and the underlying hardware.
 
 ### Stopwatch App: A Journey from C Code to Chip Execution
-![[WhatsApp Image 2025-07-14 at 17.16.03_8d549ad9 1.jpg]]
+![Stopwatch app](day%2001/Stopwatch%20app.jpeg)
 This diagram illustrates the practical application of the software-hardware interaction pipeline, using a simple "Stop Watch app" as an example.
 - **Application Layer (Eg. Stop Watch app):** At the top, we see the user-facing **Stop Watch app** displaying "00:00:03.70", which is the desired output of the application.
 - **Compiler Input (a 'C' function for stopwatch):** The process begins with the human-readable source code. Here, a "C" language function for the stopwatch is shown. This code includes standard libraries (`stdio.h`, `time.h`) and defines a `main` function that implements the stopwatch logic, including updating time, printing to the screen, and handling delays (`sleep(1)`).
@@ -122,7 +122,7 @@ The sky130 PDK defines the 6 routing leyers. the lowest leyer is called local in
 
 **Detailed Routing:** Uses the routing guides to implement the actual wiring.
 
-![[WhatsApp Image 2025-07-14 at 17.28.30_1f29d558.jpg]]
+![Global routing and Detailed routing](day%2001/Global%20routing%20and%20Detailed%20routing.jpeg)
 **Step 6. Sign Off**:- Once the routing is done, we can construct the final layout. This final layout will goes under the verification. Two types of verifications are there:
 
 Physical verification: Here design rule checking will done and it will check the final layout and owners layout
@@ -133,11 +133,11 @@ Timing Verification: Here Static Timing Analysis will done.
 
 OPENLANE provides an automated RTL-to-GDSII flow, utilizing multiple tools such as OpenROAD, Yosys, Magic, Netgen, Fault, CVC SPEF-Extractor, CU-GR, Klayout, and various scripts for design exploration and optimization. This flow began as an open-source project for authentic open-source tape-out endeavors. striVe signifies a line of entirely open SoCs: featuring an Open PDK, Open EDA, and Open RTL.
 
-![[WhatsApp Image 2025-07-14 at 17.32.57_fb20b75a.jpg]]
+![Openlane](day%2001/Openlane.jpeg)
 
 striVe SoC Family
 
-![[WhatsApp Image 2025-07-14 at 17.32.57_ab33ad79.jpg]]
+![striVe Family](day%2001/striVe%20Family.jpeg)
 
 The main goal of OPENLANE is to produce a clean GDSII with no human intervation (no-human-in-the-loop). here the meaning of clean is that:
 
@@ -163,20 +163,20 @@ The above block diagram shows the OpenLANE detailed ASIC design flow.
 
 **Synthesis Exploration**
 
-![[WhatsApp Image 2025-07-14 at 17.38.05_8a0bcaa6.jpg]]
+![Synthesis Exploration](day%2001/Synthesis%20Exploration.jpeg)
 
 This graph illustrates **synthesis exploration** by plotting **design area (μm2) against circuit delay (ps)** for different implementation strategies (S1-S8). Each point represents a unique design trade-off. The goal is to find designs with **lower area and lower delay**, effectively identifying optimal solutions on the performance-area frontier.
 
 **Design Exploration and OpenLANE regresssion testing**
 
-![[WhatsApp Image 2025-07-14 at 17.47.39_60bad205.jpg | 450]]
+![Design Exploration and OpenLane Regression testing](day%2001/Design%20Exploration%20and%20OpenLane%20Regression%20testing.jpeg)
 
 The design exploration utility is also used for regression testing(CI). we run OpenLANE on ~ 70 designs and compare the results to the best known ones.
 
 **DFT(Design for Test)**
 it perform scan inserption, automatic test pattern generation, Test patterns compaction, Fault coverage, Fault simulation.After that physical implementation is done by OpenROAD app. physical implementation involves the several steps:
 
-![[WhatsApp Image 2025-07-14 at 17.49.50_4a7dbf43.jpg | 500]]
+![DFT](day%2001/DFT.jpeg)
 
 Floor/Power Planning
 
@@ -231,7 +231,7 @@ Magic is used for design Rules checking and SPICE Extraction from Layout. Magic 
 
 The above Linux commands are performed in terminal and the same as been shown in the figure below.
 
-![[WhatsApp Image 2025-07-14 at 17.56.04_be48687a 1.jpg]]
+![Linux Commands](day%2001/Linux%20Commands.jpeg)
 
 Here we are working in Sky130_fd_sc_hd PDK varient. where, "sky130" is process name or node name."fd" is a foundary name (skyWater foundary)."sc" means standerd cell librery files and the last one "hd" stands for high density(basically one type of varient).
 
@@ -241,23 +241,23 @@ Sky130_fd_sc_hd varient contains many technology files like verilog, spice, tech
 ### <h1 id="header-1_3_2">Design Preparation Step</h1>
 Accessing OpenLANE requires using the `flow.tcl` script to direct the automated design sequence. By incorporating the "interactive" switch, users can execute the process incrementally, step by step. Conversely, running the script without this switch will carry out the entire RTL to GDSII flow in one go. Once OpenLANE is successfully launched, a visible change in the command prompt will signify its operational status.
 
-![[WhatsApp Image 2025-07-14 at 17.59.21_461b131a.jpg]]
+![OpenLane interactive](day%2001/OpenLane%20interactive.jpeg)
 
 Now we have to input all the packages which required to run the flow.
 
-![[WhatsApp Image 2025-07-14 at 18.02.03_5e8d05cc 1.jpg]]
+![pacakages](day%2001/pacakages.jpeg)
 
 Now, here we are ready to execute the command.
 
 Within OpenLANE's design directory, numerous pre-built designs, numbering around 30 to 40, are accessible. Any of these can be opened; for instance, here we're examining the `picorv32a.v` design. This particular design folder contains various associated files, such as `src` and `config.tcl`. The `config.tcl` file is comprehensive, detailing every aspect of the design, including critical information like enrollment particulars, specified clock period, and clock port details, among others.
 
-![[WhatsApp Image 2025-07-14 at 18.03.13_3086aec4.jpg]]
+![configtcl](day%2001/configtcl.jpeg)
 
 Here we can see that the time period is set to the 5.00 nsec. but is we see in the openlane sky130_fd_sc_hd folder, the period is set about 24 nsec. so it is not override to the main file. If it override then give first priority to the main folder.
 
 Now, in openlane, we are going to run the synthesis, but before synthesis, we have to prepare design setup stage. for that command is ``` prep -design picorv32a```
 
-![[WhatsApp Image 2025-07-14 at 18.08.48_0c95450a.jpg]]
+![prepration complete](day%2001/prepration%20complete.jpeg)
 
 so, here it is shown that preparation is completed.
 
@@ -284,25 +284,25 @@ run_synthesis
 ```
 The image below shows our synthesis runs successfully. 
 
-![[WhatsApp Image 2025-07-14 at 18.21.12_059ebca2.jpg]]
+![Synthesis Successful](day%2001/Synthesis%20Successful.jpeg)
 
 ### <h1 id="header-1_3_5">Steps to characterize synthesis results</h1>
 
 From the data of synthesis, total number of counter D_flip-flops is 1613. and the number of cells is 14876.
 
-![[WhatsApp Image 2025-07-14 at 18.28.06_06cb6097.jpg]]
+![number of ff](day%2001/number%20of%20ff.jpeg)
 So, the flop ratio = (number of flip flops)/(number of total cell).
 
 So, the flop ratio is 10.84%.
 
 Before run, we saw that the result folder is empty. but now, after running the synthesis, we can see that all the mapping have been done by ABC.
 
-![[WhatsApp Image 2025-07-14 at 18.28.50_6f07f2fe.jpg]]
+![picorv32a](day%2001/picorv32a.jpeg)
 
 And in the report, we can see when the actual synthesis has done. and the actual statistics synthesis report is showing below, which is same as what we have seen before.
 
-![[WhatsApp Image 2025-07-14 at 18.29.15_65d512ae.jpg]]
+![yosys start rpt](day%2001/yosys%20start%20rpt.jpeg)
 
 The below figure shows the timing report of the pre-layout synthesis.
 
-![[WhatsApp Image 2025-07-14 at 18.31.11_b3cfe0f8.jpg]]
+![Sta rpt](day%2001/Sta%20rpt.jpeg)
