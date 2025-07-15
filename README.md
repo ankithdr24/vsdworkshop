@@ -642,7 +642,7 @@ The inverter has to represented in form of the shape, drive strength, power char
 **Inputs DRC and LVS**
 This emphasizes that Design Rule Check (DRC) and Layout Versus Schematic (LVS) rules are key inputs from PDKs, providing the geometric and connectivity constraints for valid cell layouts.
 
-![celldesign_drc_lv.png](day%2002/celldesign_drc_lv.png)
+![celldesign_drc_lvs](day%2002/celldesign_drc_lvs.png)
 
 **Inputs SPICE Models**
 This details how "SPICE model parameters" from PDKs provide the complex mathematical equations and values (like threshold voltage, current in linear/saturation regions) necessary for accurate circuit simulation.
