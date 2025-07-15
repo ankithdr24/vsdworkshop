@@ -39,7 +39,7 @@ Prominently displayed within the SoC are a **GPIO (General Purpose Input/Output)
 Additionally, the chip incorporates other "Foundry IPs" essential for its functionality. These likely include Analog-to-Digital Converters (ADCs) and Digital-to-Analog Converters (DACs) for handling analog signals, and an SPI (Serial Peripheral Interface) module, indicated by the "SPI" label and associated pins, for serial communication with peripherals. The presence of these IPs alongside the RISC core signifies a comprehensive, integrated solution designed for a range of embedded applications.
 
 ### <h1 id="header-1_1_2">From Software Applications to Hardware</h1>
-![[WhatsApp Image 2025-07-14 at 17.14.28_34a7f672.jpg]]
+![Application to Hardware flow](day%2001/Application%20to%20Hardware%20flow.jpeg)
 
 This section explores the execution of applications on a computing system, detailing the flow from application software through system software to the hardware chip. Applications first interact with the system software, which is responsible for translating the entire program into binary code. Within the system software, several layers facilitate this process: the Operating System (OS), Compiler, and Assembler. 
 
