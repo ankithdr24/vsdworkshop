@@ -451,7 +451,7 @@ Let's consider the following design example for implementation. The first circui
 
 Let's introduce an additional design for implementation. Circuits of this nature are exceptionally valuable for comprehending the intricate timing analysis between different clock domains.
 
-![placement1](day%2002/placement1.png)
+![pinplacement1](day%2002/pinplacement1.png)
 
 The complete design now appears as shown below, featuring six input ports and five output ports. The intricate connectivity details among these gates are encoded using either VHDL or Verilog hardware description languages, collectively forming what is termed the 'Netlist'.
 
