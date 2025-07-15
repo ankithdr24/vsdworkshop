@@ -652,7 +652,7 @@ This details how "SPICE model parameters" from PDKs provide the complex mathemat
 **Inputs Library and user-defined Specs**
 There are inputs like height, supply voltage, pin-location, gate length, metal layers etc.
 
-![celldesign_libnuser_height](day%2002/celldesign_libnuser_height.png)
+![celldesign_libnuser_height'](day%2002/celldesign_libnuser_height'.png)
 
 The above figure highlights how "Cell-height" is a crucial input from the Process Design Kits (PDKs) in the cell design flow, influencing the overall vertical dimension of the standard cells and IP blocks.
 
