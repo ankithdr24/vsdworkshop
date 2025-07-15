@@ -305,3 +305,501 @@ And in the report, we can see when the actual synthesis has done. and the actual
 The below figure shows the timing report of the pre-layout synthesis.
 
 ![Sta rpt](day%2001/Sta%20rpt.jpeg)
+
+# <h2 id="header-2">Day 2 - Good floor planning considerations</h2>	 
+## <h2 id="header-2_1">Chip Floor planning consideration</h2>
+### <h2 id="header-2_1_1">Utilization factor and aspect ratio</h2>
+
+Let's determine the width and height of the Core and Die, a crucial initial step in the physical design flow. We'll start with a netlist comprising two flip-flops interconnected by basic combinational logic. A netlist, fundamentally, defines the interconnections within an electronic circuit. Our focus here hinges on the physical dimensions of the constituent logic gates (AND and OR) and the specific flip-flops employed. Our goal is to translate these symbolic representations into tangible physical dimensions, specifically for the Core and Die areas, while excluding the dimensions attributable to routing wires. 
+
+Let's standard cell have dimensions of 1unit*1unit
+
+So, area= 1 Sq. units
+
+Asuume same area for the flipflop as well = 1 Sq. units
+
+with help of these dimensions and netlist let's calculate the area occupied by the netlist on a silicon wafer.
+
+![image](https://github.com/kmkalpana2001/DIGITAL-VLSI-SOC-DESIGN-AND-PLANNING/assets/165163110/abf79875-e1e3-4faf-87a6-43a12d44db8d)
+
+Prior to delving into detailed routing, we effectively condense all the flip-flops and logic gates onto a unified "plate" or base. By consolidating these components and abstracting away the interconnecting wires for this initial calculation, we can determine a preliminary footprint. In this simplified view, if the width and length of this combined unit are both 2 square units, then the total occupied area amounts to 4 square units. This gives us a rough, minimum area estimate for the given netlist, setting the stage for subsequent physical design steps.
+
+![image](https://github.com/kmkalpana2001/DIGITAL-VLSI-SOC-DESIGN-AND-PLANNING/assets/165163110/beb2d87b-db4f-47ac-95db-7a5586018c98)
+
+What is 'Core' and 'Die' section of a chip?
+
+We have a silicon wafer on which all the logics are implemented. In this one section is referred as 'Die' and inside the Die we have the Core. 
+
+A **Die** which consists of core, is small semiconductor material  specimen on which the fundamental circuit is fabricated.
+
+A '**Core** is the section of the chip where the fundamental logic of the design is placed.
+
+![Slicon_Wafer](day%2002/Slicon_Wafer.png)
+
+Now, envision placing this aggregated logic, representing our netlist, within the core of the chip. If this netlist is designed to fully occupy the entire core area, it signifies 100% core utilization. This concept allows us to calculate the "utilization factor," a critical metric in physical design. The utilization factor is typically defined as:
+
+Utilization Factor = Area occupied by netlist / Total area of the core
+   
+Let us now put the dimensions we have,
+
+Utilization factor = 4*1sq.unit / 2unit *2unit = 4sq unit /  4sq unit
+
+So, utilization factor = 1 (It means core has utilized all the area and no span left)
+
+Aspect Ratio = Height /  width =  2 unit /  2unit =  1
+
+Whenever Aspect Ratio is 1 it signifies that chip is square shaped. When it is not 1 it means the chip is in rectangular shape.
+
+![image](https://github.com/kmkalpana2001/DIGITAL-VLSI-SOC-DESIGN-AND-PLANNING/assets/165163110/51360246-9ab3-4209-ba7d-d1d99bcd65ef)
+
+For example, Lets take another dimensions of the width= 4unit and height = 2unit. So from the above formula of utilization factor we it equal to 0.5 which means the chip has not covered the whole area of the core and aspect ratio is also 0.5  which means the chip is rectangular in shape.
+
+The leftover area can be used to placed some additional cells like buffers or something else.
+
+![image](https://github.com/kmkalpana2001/DIGITAL-VLSI-SOC-DESIGN-AND-PLANNING/assets/165163110/10a1d860-d6c2-4efc-95a7-d5f123cbdca3)
+
+
+### <h2 id="header-2_1_2">Utilization factor and aspect ratio</h2>
+
+Lets take another example for a square chip wth dimensions 4*4 sq units. We will get utilization factor= 0.25 it means out of the whole chip area only 25% area is utilized by the netlistand 75% is available for additional cells which can be use for routing in which we will have layering. Aspect ratio we get = 1 it means chip is square in shape.
+
+![image](https://github.com/kmkalpana2001/DIGITAL-VLSI-SOC-DESIGN-AND-PLANNING/assets/165163110/a64a81cd-760a-44b8-a81c-93318bf49746)
+
+**Define locations of Preplaced Cells**:-  Lets take a combinational logic which does some amount of function and assume its a huge circuit having some N Logic gates so let's devide it into some small numbers of gates. We will cut the whole circuit into two parts, and separate both of them into two blocks and both block will be implemented seperately.
+
+![image](https://github.com/kmkalpana2001/DIGITAL-VLSI-SOC-DESIGN-AND-PLANNING/assets/165163110/477f5715-38c7-4cb8-ab4f-6b6108839e69)
+
+In both the blocks lets extend the input output pins and now we will black box the boxes and detached them. After black boxing, the upper portion is invisible from the top or invisible to the one , who is looking into the main netlist. now will seperate them out as two different IP's or modules.
+
+![blackbox](day%2002/blackbox.png)
+
+A significant advantage of this modular approach is the ability to reuse these pre-designed components multiple times after a single implementation. This principle extends beyond basic logic gates and flip-flops to other Intellectual Property (IP) blocks. For instance, specialized IP cores like Memory units, Clock-gating cells, Comparators, and Multiplexers are all integral parts of a larger, top-level netlist. Each of these IPs receives specific input signals, performs its designated function, and delivers outputs, yet their complex internal functionality is designed and verified only once, making them readily deployable in diverse designs. 
+
+The arrangement of these IP's in a chip is refer as **floor planning**.
+
+These IP's have user-defined locations, and hence are placed in chip before automated placement and routing are called **"pre-placed cells"**. 
+
+These cells are placed in such a way that, the placement and routing tool do not touch the location of the cell.
+
+![preplaced_cells](day%2002/preplaced_cells.png)
+
+The figure above illustrates the placement of pre-placed cells within a chip's core, demonstrating how larger, fixed-location blocks (Block a, Block b, and Block c) are integrated into the overall die and core structure.
+
+
+### <h2 id="header-2_1_3">De-coupling capacitors</h2>
+
+#### Enhancing Power Integrity with Decoupling Capacitors
+**Why Decoupling is Essential for Pre-Placed Cells?**
+
+Pre-placed cells, such as large IP blocks (memories, processors) or critical clock distribution components, often exhibit high current demands during their switching cycles. These sudden current surges can cause localized voltage drops (IR drop) or ground bounces across the power distribution network. Such fluctuations can negatively impact the performance and reliability of the surrounding circuitry, potentially leading to timing violations or functional failures. By placing decoupling capacitors in close proximity to these pre-placed cells, they can rapidly supply the necessary transient current, thereby stabilizing the local power supply and ensuring consistent voltage levels. This localized energy buffering is vital for maintaining the integrity of the power delivery network and ensuring the robust operation of high-performance integrated circuits.
+
+![image](https://github.com/kmkalpana2001/DIGITAL-VLSI-SOC-DESIGN-AND-PLANNING/assets/165163110/b8b1d031-c395-4fde-8c28-25a7f2f7cfcc)
+
+In real-world circuits, an ideal logic '1' (typically 1V) often experiences a voltage drop, becoming, for example, 0.97V (Vdd'). This directly shrinks both the noise margins: NM low (for logic '0') and NM high (for logic '1'). Such reduced margins create a hazardous scenario where external noise or internal variations can easily cause a signal to be misinterpreted, leading to erroneous operation.
+
+![image](https://github.com/kmkalpana2001/DIGITAL-VLSI-SOC-DESIGN-AND-PLANNING/assets/165163110/36d7fe02-ad66-4b72-be7a-998378684242)
+
+To mitigate this issue, decoupling capacitors (Cd) are strategically placed in parallel with the circuit. Each time the circuit transitions, it draws the necessary current from Cd, while an associated RL (Resistor-Inductor) network is concurrently employed to replenish the charge within Cd. Consequently, the immediate current demands of the circuit are effectively supplied by the decoupling capacitor.
+
+![image](https://github.com/kmkalpana2001/DIGITAL-VLSI-SOC-DESIGN-AND-PLANNING/assets/165163110/3547d7d2-ff77-43ba-9e69-c1e64393c1c1)
+
+In the chip's layout, this appears as depicted below: decoupling capacitors are strategically positioned among blocks 'a', 'b', and 'c'. Within this entire arrangement, the consistent power supply from these decoupling capacitors is thus ensured. Upon completion of this step, we have effectively addressed the requirements for local power delivery.
+
+![image](https://github.com/kmkalpana2001/DIGITAL-VLSI-SOC-DESIGN-AND-PLANNING/assets/165163110/3078f01a-e20f-4aee-868a-9a2bb0449f71)
+
+
+### <h2 id="header-2_1_4">Power planning</h2>
+
+Now, let's treat that local circuitry as a black box, a reusable element that can be replicated multiple times. We acknowledge that some logic exists at the boundaries, and the issue of current demand within these local blocks has been addressed by decoupling capacitors. Consider a signal propagating from a driver to a load, specifically a transition from logic '0' to logic '1'. It's crucial to maintain signal integrity across this driver-to-load line so the load receives an accurate representation. Power supply is then applied.
+
+Now, imagine a 16-bit bus that must reliably transmit this same signal from the driver to the load, requiring sufficient power from the supply. However, this bus lacks decoupling capacitors because it's simply not feasible to place them everywhere. Given the power supply is physically distant from this bus, a definite voltage drop will occur along the path.
+
+ ![image](https://github.com/kmkalpana2001/DIGITAL-VLSI-SOC-DESIGN-AND-PLANNING/assets/165163110/7c9f6257-fb53-43e6-a5d2-bb37e703f943)
+
+
+When a specific line on the 16-bit bus signifies a logic '1', it indicates that the associated capacitance is charged to Vdd. Conversely, if it represents a logic '0', that capacitance is discharged to ground. Now, consider this 16-bit bus connected to an inverter. Consequently, all initially charged capacitors will discharge, and those initially discharged will charge, due to the inverter's operation.
+
+
+![image](https://github.com/kmkalpana2001/DIGITAL-VLSI-SOC-DESIGN-AND-PLANNING/assets/165163110/77998949-b1e9-4321-a935-1f463dffc968)
+
+
+The critical issue arises because all capacitors are tied to a single ground connection. During discharge, this common ground experiences a sudden voltage fluctuation, commonly known as a "Ground Bounce." Should the magnitude of this bounce surpass the defined noise margin, the circuit risks entering an undefined state. In this ambiguous condition, the signal could unpredictably settle as either a logic '1' or a '0', rendering the system's behavior entirely unpredictable.
+
+![image](https://github.com/kmkalpana2001/DIGITAL-VLSI-SOC-DESIGN-AND-PLANNING/assets/165163110/67eb5dd9-6bf5-4581-8f21-af3ad7fb8285)
+
+
+Conversely, all capacitors at '0' volts must charge to 'V' volts via a singular Vdd tap point. This action inevitably causes a voltage drop at that Vdd tap. As long as this voltage reduction remains within the acceptable noise margin, circuit operation is stable. However, if the drop pushes the voltage into an undefined region, the system's behavior becomes unpredictable.
+
+![image](https://github.com/kmkalpana2001/DIGITAL-VLSI-SOC-DESIGN-AND-PLANNING/assets/165163110/ef424a46-925a-431b-bdb8-9a210e7ca3bf)
+
+The previously observed phenomenon, characterized by supply voltage degradation, originated from applying power at a singular point. The resolution involves employing multiple power supplies. Consequently, each distinct block will draw current from its nearest power source and similarly discharge current into its closest ground connection. This distributed power delivery configuration is commonly referred to as a **mesh**.
+
+![image](https://github.com/kmkalpana2001/DIGITAL-VLSI-SOC-DESIGN-AND-PLANNING/assets/165163110/b1d49ca0-8e8a-4953-887a-19628abc3448)
+
+
+And the power planning is shown below,
+
+![image](https://github.com/kmkalpana2001/DIGITAL-VLSI-SOC-DESIGN-AND-PLANNING/assets/165163110/97e14546-cd7d-4eff-aa10-c93df7ae3562)
+
+### <h2 id="header-2_1_5">Pin placement and logical cell placement blockage</h2>
+
+**Pin Placement**
+
+Let's consider the following design example for implementation. The first circuit here is driven by clk1, while the second circuit is driven by clk2; they have distinct inputs, Din1 and Din2, and corresponding outputs, Dout1 and Dout2, respectively. Additionally, we have some pre-placed cells, specifically BlockA, which receives inputs from both Din1 and Din2. Another pre-placed cell, BlockB, takes inputs from clk1 and clk2 and generates a clk output. Therefore, our current setup features four input ports: Din1, Din2, Clk1, Clk2, and three output ports: Dout1, ClkOut, Dout2.
+
+![image](https://github.com/kmkalpana2001/DIGITAL-VLSI-SOC-DESIGN-AND-PLANNING/assets/165163110/0e1bf8ee-1b0e-452e-8a05-6b7dbbce57c7)
+
+Let's introduce an additional design for implementation. Circuits of this nature are exceptionally valuable for comprehending the intricate timing analysis between different clock domains.
+
+![placement1](day%2002/placement1.png)
+
+The complete design now appears as shown below, featuring six input ports and five output ports. The intricate connectivity details among these gates are encoded using either VHDL or Verilog hardware description languages, collectively forming what is termed the 'Netlist'.
+
+![completedesign](day%2002/completedesign.png)
+
+This diagram illustrates the "Pin Placement" stage in chip design. It shows the core with pre-placed blocks (Block a, Block b, Block c) now surrounded by strategically positioned Decoupling Capacitors (DEC P1, DEC P2, DEC P3). Input and output pins (like Din1, CLK1, Dout1, Clk Out, etc.) are visible along the perimeter of the core. Crucially, the Vss (ground) and Vdd (power) lines form a mesh grid, interconnected by contact points, highlighting the robust power delivery network within the chip.
+
+![pinplace_withoutconnection](day%2002/pinplace_withoutconnection.png)
+
+Let's now integrate this netlist into the core we previously designed, and subsequently, populate the empty region between the core and the die with pin information. The frontend team is responsible for defining the netlist's connectivity, including inputs and outputs, while the backend team handles pin placements. Accordingly, we must position the pre-placed blocks in close proximity to their respective input pins.
+
+![image](https://github.com/kmkalpana2001/DIGITAL-VLSI-SOC-DESIGN-AND-PLANNING/assets/165163110/fcacd10f-8811-427e-be3a-3931819553c6)
+
+One notable observation here is the larger size of the clock-in and clock-out pins compared to standard input and output pins. This is because input clocks continuously supply signals to every element on the chip, and output clocks must deliver signals as rapidly as possible. Consequently, a path with minimal resistance is crucial for both clock inputs and outputs; a larger pin size directly correlates with lower resistance.
+
+Another critical consideration is that this pin placement area becomes restricted for subsequent routing and cell placements. Therefore, it necessitates a logical cell placement blockage, which is visually represented in the image as the shaded areas between the pins.
+
+The floorplan is now finalized, preparing the design for the subsequent Placement and Routing stages.
+
+### <h2 id="header-2_1_6">Steps to run floorplan using OpenLANE</h2>
+
+Before run the floorplanning, we required some switches for the floorplanning. these we can get from the configuration from openlane.
+
+![image](https://github.com/kmkalpana2001/DIGITAL-VLSI-SOC-DESIGN-AND-PLANNING/assets/165163110/67041b25-ee43-4864-9bce-fb0386d53641)
+
+Here we can see that the core utilization ratio is 50% (bydefault) and aspect ratio is 1 (bydefault). similarly other information is also given. But it is not neccessory to take these values. we need to change these value as per the given requirments also.
+
+Here FP_PDN files are set the power distribution network. These switches are set in the floorplane stage bydefault in OpenLANE.
+
+![image](https://github.com/kmkalpana2001/DIGITAL-VLSI-SOC-DESIGN-AND-PLANNING/assets/165163110/2b1281f9-b85a-4b08-b507-49c39c51c434)
+
+Here, (FP_IO MODE) 1, 0 means pin positioning is random but it is on equal distance.
+
+In the OpenLANE lower priority is given to system default (floorplanning.tcl), the next priority is given to config.tcl and then priority is given to PDK varient.tcl (sky130A_sky130_fd_sc_hd_congig.tcl).
+
+Now we see, with this settings how floorplan run.
+
+### <h2 id="header-2_1_7">Review floorplan files and steps to view floorplan</h2>
+
+In the run folder, we can see the connfig.tcl file. this file contains all the configuration that are taken by the flow. if we open the config.tcl file, then we can see that which are the parameters are accepted in the current flow.
+
+![image](https://github.com/kmkalpana2001/DIGITAL-VLSI-SOC-DESIGN-AND-PLANNING/assets/165163110/be2a8bf3-4857-427e-a690-5ff3241bfbd9)
+
+![image](https://github.com/kmkalpana2001/DIGITAL-VLSI-SOC-DESIGN-AND-PLANNING/assets/165163110/36985c6b-3e9f-473d-ab32-29b224cff6f1)
+
+To watch how floorplane looks, we have to go in the results. in the result, one def( design exchange formate) file is available. if we open this file, we can see all information about die area (0 0) (660685 671405), unit distance in micron (1000). it means 1 micron means 1000 databased units. so 660685 and 671405 are databased units. and if we devide this by 1000 then we can get the dimensions of chips in micrometer.
+
+![image](https://github.com/kmkalpana2001/DIGITAL-VLSI-SOC-DESIGN-AND-PLANNING/assets/165163110/cb35a72a-6fa7-402b-a0ed-8010ffdcccd3)
+
+so, the width of chip is 660.685 micrometer and height of the chip is 671.405 micrometer.
+
+To see the actual layout after the flow, we have to open the magic file by adding the command ```magic -T /home/kunalg123/Desktop/work/tools/openlane_working_dir/pdks/sky130A/libs.tech/magic/sky130A.tech lef read ../../tmp/merged.lef def read picorv32a.floorplan.def```
+
+And then after pressing the enter, Magic file will open. here we can see the layout.
+
+![image](https://github.com/kmkalpana2001/DIGITAL-VLSI-SOC-DESIGN-AND-PLANNING/assets/165163110/bc916128-b14b-4d46-af0c-296f39dafb5f)
+
+
+### <h2 id="header-2_1_8">Review floorplan layout in Magic</h2>
+
+In the layout we can see that, input output pins are at equal distance.
+
+![image](https://github.com/kmkalpana2001/DIGITAL-VLSI-SOC-DESIGN-AND-PLANNING/assets/165163110/f02464f8-3bbc-4475-90a6-1d523ba36857)
+
+
+after selecting (To select object, first click on the object and then press 's' from keyboard. the object will hight lited. to zoom in the object, click on the object and then press 'z' and for zoom out press 'sft+z') one input pin, if we want to check the location or to know at on which layer it is available, we have to open tkcon window and type "what". it will shows all the details about that perticular pin.
+
+![image](https://github.com/kmkalpana2001/DIGITAL-VLSI-SOC-DESIGN-AND-PLANNING/assets/165163110/5dc0a65b-4216-4879-b786-e4de4319dfc4)
+
+
+so, it show that the pin is in the metal 3.similarly doing for the vertical pins, we find that this pin is at metal 2.
+
+![image](https://github.com/kmkalpana2001/DIGITAL-VLSI-SOC-DESIGN-AND-PLANNING/assets/165163110/b934b69a-5357-4b4d-a51a-e66cd352fb6c)
+
+
+Along with the side rows,the Decap cells are arranged at the border of the side rows.
+
+![image](https://github.com/kmkalpana2001/DIGITAL-VLSI-SOC-DESIGN-AND-PLANNING/assets/165163110/e5f09e25-ff25-411b-aacc-74ae3df0ae61)
+
+
+
+here we can see that first standerd cells is for buffer 1. similarly other cells are for buffer 2, AND gate etc.
+
+![image](https://github.com/kmkalpana2001/DIGITAL-VLSI-SOC-DESIGN-AND-PLANNING/assets/165163110/e0624489-5298-45cd-a08d-db2b3ec572b7)
+
+
+## <h2 id="header-2_2">Library building and Placement</h2>
+#### Netlist binding and initial place design 
+
+**Binding a netlist with physical cells:-** This involves translating the abstract logical representation of gates into tangible, geometrically defined components. In the netlist, a NOT gate might be symbolically represented as a triangle, but in reality, it's implemented as a rectangular box with specific physical dimensions (width and height). Similarly, an AND gate and flip-flops, while having distinct logical symbols, are also physically realized as rectangular or square blocks. Therefore, for every component listed in the netlist, a particular shape and precise physical dimensions are assigned. This is crucial because abstract shapes like those for AND or OR gates do not exist in the physical world; all blocks, including these gates, must be defined with real-world width, height, and a proper, typically rectangular, physical form.
+
+![image](https://github.com/kmkalpana2001/DIGITAL-VLSI-SOC-DESIGN-AND-PLANNING/assets/165163110/687b1d86-e4aa-48d6-9cec-f354f5b2c5eb) 
+
+All wires are now disregarded; the gates, flip-flops, and blocks are now compiled within a designated **Library**.
+
+A library functions as a repository, akin to a collection of books, where all gates and flip-flops are cataloged. This library also stores crucial timing data for each "book," such as gate delays. It can be categorized into two sub-libraries: one dedicated to physical shape and size, and another solely for delay information. Furthermore, the library offers diverse variations of each cell; for instance, the same cell might be available in a larger form. A larger cell typically offers a lower resistance path, resulting in faster operation and reduced delay. Designers can select cells from these options based on specific timing requirements and the available space within the floorplan.
+
+![image](https://github.com/kmkalpana2001/DIGITAL-VLSI-SOC-DESIGN-AND-PLANNING/assets/165163110/8871a0f8-ddd0-419c-bbf5-fe09fe42fb49)
+
+**Placement**: After assigning precise shapes and sizes to each gate, the subsequent step involves positioning these physical representations onto the pre-defined floorplan. We possess a floorplan complete with input and output ports, a specific netlist, and assigned dimensions for every component within that netlist. This effectively provides us with a physical perspective of the logic gates. The immediate next action is to integrate this netlist onto the floorplan, utilizing the connectivity data from the netlist to arrange the physical gate views within the designated layout.
+
+![image](https://github.com/kmkalpana2001/DIGITAL-VLSI-SOC-DESIGN-AND-PLANNING/assets/165163110/7936ded3-ad15-404b-9a32-3ea64bc591b2) 
+
+Now, with our existing floorplan containing the pre-placed cells from earlier stages, the placement process ensures their undisturbed locations are preserved. Furthermore, it strictly prevents any other cells from being positioned over these pre-existing ones. Our objective is to arrange the physical view of the netlist onto the floorplan such that logical connectivity is meticulously upheld, enabling the circuit to interact efficiently with its input and output ports, thereby maintaining precise timing and minimizing signal delay.
+
+![image](https://github.com/kmkalpana2001/DIGITAL-VLSI-SOC-DESIGN-AND-PLANNING/assets/165163110/8c6fb8e4-9124-4983-be3f-757f2845ecea)
+
+
+Here, we initially observe the arrangement of the netlist's remaining components on the floorplan. All elements have been positioned to be in close proximity to their respective input and output pins. 
+
+However, the distance between FF1 of Stage 4 and Din4 remains notably larger than other connections. This particular issue can be resolved through further placement optimization.
+
+![image](https://github.com/kmkalpana2001/DIGITAL-VLSI-SOC-DESIGN-AND-PLANNING/assets/165163110/ac32f3c9-c3a9-4320-894b-a08ab407f068)
+
+
+### <h2 id="header-2_2_2">Optimize Placement using Estimated wire-length and Capacitance</h2>
+
+**Placement Optimization**: In this phase, we address the aforementioned distance issue. Considering the connection from Din2 to FF1, a significant wire length would be required. Before actual routing, we estimate the substantial capacitance and resistance associated with such a long wire. If a signal is sent from Din2, FF1 would struggle to reliably receive that input due to the extended distance. To maintain signal integrity, we can insert intermediate steps called "repeaters." These repeaters, essentially buffers, regenerate the original signal, creating a fresh, identical signal to propagate further. This process repeats until the signal reaches the intended cell, ensuring signal integrity. While repeaters solve the signal integrity problem, they inherently increase area consumption on the floorplan due to their inclusion.
+
+![image](https://github.com/kmkalpana2001/DIGITAL-VLSI-SOC-DESIGN-AND-PLANNING/assets/165163110/f47771b4-b28a-47db-b0dc-e5f13dd4c1b1)
+
+In **Stage 1**, the signal transmission requires no repeaters. However, in **Stage 2**, the considerable distance leads to an extended wire length, causing the signal to fall outside its specified range. Consequently, a repeater becomes necessary to ensure proper signal propagation.
+
+![placement_stage2](day%2002/placement_stage2.png)
+
+### <h2 id="header-2_2_3">Final placement optimization</h2>
+
+As similar to **Stage 2**, in **Stage 3** also we required the buffer between gate2 and FF2.
+
+![image](https://github.com/kmkalpana2001/DIGITAL-VLSI-SOC-DESIGN-AND-PLANNING/assets/165163110/2fc8bf91-4303-4837-b7e9-f9832d7a3723)
+
+**Stage 4** presents unique complexities compared to preceding stages. At this point, it becomes imperative to verify the accuracy of our actions. To achieve this, we must conduct a thorough Timing Analysis, utilizing ideal clock conditions. The data derived from this analysis will then enable us to determine the correctness of the current placement.
+
+![image](https://github.com/kmkalpana2001/DIGITAL-VLSI-SOC-DESIGN-AND-PLANNING/assets/165163110/121df907-96ad-4893-ae1d-d9fa96b7a328)
+
+### <h2 id="header-2_2_4">Need for libraries and characterization</h2>
+
+Every IC design flow mandates a series of sequential steps. Initially, Logic Synthesis converts a functional description, often coded in RTL, into a valid hardware representation. The outcome of this process is an arrangement of gates that accurately reflects the original RTL-described functionality.
+
+Following Logic Synthesis is Floorplanning, where the synthesized output is imported to determine the Core and Die dimensions. Placement, the subsequent step, involves strategically positioning logic cells onto the chip to optimize initial timing. Next, Clock Tree Synthesis (CTS) ensures that clock signals reach every element simultaneously, while also guaranteeing consistent rise and fall times for each clock signal. Routing then follows a specific flow, dictated by the flip-flop characteristics. 
+
+![needforlib_synplaceroute](day%2002/needforlib_synplaceroute.png)
+
+Finally, Static Timing Analysis (STA) concludes the process by evaluating setup time, hold time, and the circuit's maximum achievable frequency. Throughout all these stages, "GATES or Cells" remain the unifying element.
+
+![need_forlibsta](day%2002/need_forlibsta.png)
+
+
+### <h2 id="header-2_2_5">Congestion aware placement using RePlAce</h2>
+
+Right now we are not constrain about timing, but constrain about the congestion. so, we are making the congrstion is less.
+
+The placement is donne in two stages. Global and detailed. In global placement, legalization is not happened but after detailed placement legalization will be done.
+
+When we run the placement, first Global placement is happens. main objective of glibal placement is to reducing the length of wires.
+
+Now opening the Magic file to see actual view of standerd cells placement.And the actual view in the magic file is given below.
+
+![image](https://github.com/kmkalpana2001/DIGITAL-VLSI-SOC-DESIGN-AND-PLANNING/assets/165163110/d7e29ff0-f009-4c72-9129-d7662b46f8b8)
+
+If we zooom into this, we find the buffers, gates, flip flops in this.
+
+![image](https://github.com/kmkalpana2001/DIGITAL-VLSI-SOC-DESIGN-AND-PLANNING/assets/165163110/768d1fbd-c7b4-4b15-bbd5-cebd57a1c79a)
+
+
+
+## <h2 id="header-2_3">Cell design and characterization flows</h2>
+### <h2 id="header-2_3_1">Inputs for cell design flow</h2>
+
+In Cell Design Flow, Gates, flipflops, buffers are named as 'Standard Cells'. These standard cells are being placed in the section called as 'Library'.And in the library many other cells are available which have same functionality but the size is different.
+
+![image](https://github.com/kmkalpana2001/DIGITAL-VLSI-SOC-DESIGN-AND-PLANNING/assets/165163110/22c0c83e-e32e-453b-ad64-b5cef4c4d6af)
+
+If you lokk into one of the inverter from the library the cell design flowis as follows
+
+The inverter has to represented in form of the shape, drive strength, power charracteristic and so on. Here cell design flow is devided into three parts.
+
+1. Inputs
+
+2. Design steps
+
+3. Outputs
+
+**1) INPUTS**:- Inputs required for cell design is PDKs, DRC and LVS rules SPICE models, library and user defined specs. In DRC& LVS rules tech file is provided which contains design rules and actual values. Rules can be converted in to code. SPICE MODEL tells about threshold voltage equation.
+
+![image](https://github.com/kmkalpana2001/DIGITAL-VLSI-SOC-DESIGN-AND-PLANNING/assets/165163110/2fb42be5-76e2-4017-9ff9-4fb23306b24e)
+
+**Inputs DRC and LVS**
+This emphasizes that Design Rule Check (DRC) and Layout Versus Schematic (LVS) rules are key inputs from PDKs, providing the geometric and connectivity constraints for valid cell layouts.
+
+![celldesign_drc_lv.png](day%2002/celldesign_drc_lv.png)
+
+**Inputs SPICE Models**
+This details how "SPICE model parameters" from PDKs provide the complex mathematical equations and values (like threshold voltage, current in linear/saturation regions) necessary for accurate circuit simulation.
+
+![celldesign_spicemodel](day%2002/celldesign_spicemodel.png)
+
+**Inputs Library and user-defined Specs**
+There are inputs like height, supply voltage, pin-location, gate length, metal layers etc.
+
+![celldesign_libnuser_height](day%2002/celldesign_libnuser_height.png)
+
+The above figure highlights how "Cell-height" is a crucial input from the Process Design Kits (PDKs) in the cell design flow, influencing the overall vertical dimension of the standard cells and IP blocks.
+
+![celldesign_libnuser_voltage](day%2002/celldesign_libnuser_voltage.png)
+
+The above figure illustrates that "Supply voltage" is a fundamental input from PDKs, defining the operational voltage levels critical for the design and performance of the cells within the chip.
+
+![celldesign_libnuser_pinloc](day%2002/celldesign_libnuser_pinloc.png)
+
+The above figure shows "Pin location" as another critical input from the PDKs for cell design, dictating where the input and output connections are precisely positioned on a cell's layout.
+
+![celldesign_libnuser_gatelength](day%2002/celldesign_libnuser_gatelength.png)
+
+The above figure points out that "Drawn gate-length" is a vital parameter derived from PDKs, specifying the physical length of the transistor gates, which directly impacts device performance.
+
+![celldesign_libnuser_metallayers](day%2002/celldesign_libnuser_metallayers.png)
+
+The above figure indicates that "Metal layers" are fundamental inputs from PDKs, defining the number and characteristics of the conductive layers used for interconnects within the cell layout.
+
+### <h2 id="header-2_3_2">Circuit design steps</h2>
+
+The separation between the power rail and the ground rail defines the cell height. Cell width depends upon the timing and drive strength.
+
+**2)Design steps**:- Design involves three steps which are circuit design, layout design, characterization.
+
+**In circuit Design** there are two steps.
+
+First step is to implement the function itself and second step is to model the PMOS and NMOS transistor in such a fashion in order to meet the library.
+
+**3)Outputs**
+
+The typical output what we get from the circuit design is CDL(circuit description language) file, GDSII, LEF, extracted spice netlist(.cir).
+
+
+![image](https://github.com/kmkalpana2001/DIGITAL-VLSI-SOC-DESIGN-AND-PLANNING/assets/165163110/8e9891ea-35e0-48eb-b6f5-53376c86528e)
+
+
+### <h2 id="header-2_3_3">Layout design step</h2>
+
+In Layout Design, the initial step involves realizing the desired circuit function using a combination of PMOS and NMOS transistors. Following this, the next crucial phase is to extract the distinct PMOS and NMOS network graphs from the implemented transistor-level design.
+
+![image](https://github.com/kmkalpana2001/DIGITAL-VLSI-SOC-DESIGN-AND-PLANNING/assets/165163110/25c9f2db-c630-41d7-be4a-cab6f93a94af)
+
+After acquiring the network graphs, the subsequent step is to determine the Euler's path. An Euler's path is essentially a traversal within the graph where each edge is visited precisely once.
+
+![image](https://github.com/kmkalpana2001/DIGITAL-VLSI-SOC-DESIGN-AND-PLANNING/assets/165163110/117eb8be-2f24-4b7b-a5fa-052ef4b3bd43)
+
+Next step is to draw stick diagram based on the Euler's path. This stick diagram is derived out of the circuit diagram.
+
+![image](https://github.com/kmkalpana2001/DIGITAL-VLSI-SOC-DESIGN-AND-PLANNING/assets/165163110/a89a6f84-fa7e-4a36-9af7-74ab04f5b5c3)
+
+
+
+The subsequent step involves transforming this stick diagram into a standard, proper layout, then applying the specific rules previously discussed. Once this particular layout is achieved, all cell specifications, including cell width, cell length, drain current, pin locations, and other relevant attributes, will be precisely defined.
+
+![image](https://github.com/kmkalpana2001/DIGITAL-VLSI-SOC-DESIGN-AND-PLANNING/assets/165163110/7917c567-5aa7-4c66-b8ab-43e0e4808e06)
+
+The final step involves extracting the parasitics from the specific layout and characterizing them in terms of timing. Prior to this, the output from the layout design will be in GDSII format. Once the extracted SPICE netlist is obtained, it undergoes characterization. This characterization process provides crucial timing, noise, and power information.
+
+### <h2 id="header-2_3_4">Typical characterization flow</h2>
+
+Drawing upon our available inputs, let's now construct the characterization flow.
+
+The initial step involves ingesting the model. Subsequently, the extracted SPICE netlist is read in. The third step requires defining or recognizing the buffer's behavior. Following this, in the fourth step, the inverter's subcircuits are read. The fifth step necessitates attaching the required power supplies. Next, in the sixth step, the stimulus is applied. The seventh step involves providing the necessary output capacitance. Finally, the eighth step entails issuing the appropriate simulation command; for instance, a `.tran` command for transient simulation or a `.dc` command for DC simulation.
+
+All the steps are shown below in the two images.
+
+![typchar_flow1](day%2002/typchar_flow1.png)
+
+![typchar_flow2](day%2002/typchar_flow2.png)
+
+Next step is to feed in all this inputs from 1 to 8 in a form of a configuration file to the characterization software **"GUNA"** .
+
+This software will generate power, noise and timing model.
+
+![image](https://github.com/kmkalpana2001/DIGITAL-VLSI-SOC-DESIGN-AND-PLANNING/assets/165163110/19b01aa6-c6ba-4d39-8d10-539a40ab9f39)
+
+## <h2 id="header-2_4">General timing characterization parameters</h2>
+### Timing threshold definitions
+
+
+As observed in the preceding section, the cascaded inverters, power sources, and applied stimulus introduce a crucial aspect: comprehending the distinct threshold points within a waveform, referred to as "Timing threshold definitions." 
+
+In the accompanying figure, the term 'Slew_low_rise-thr' represents a value near zero, typically around 20%, though it can also be 30%.
+
+![image](https://github.com/kmkalpana2001/DIGITAL-VLSI-SOC-DESIGN-AND-PLANNING/assets/165163110/3819e09b-be65-480b-b01b-dab709ef687b)
+
+Slew_high_rise_thr
+
+![image](https://github.com/kmkalpana2001/DIGITAL-VLSI-SOC-DESIGN-AND-PLANNING/assets/165163110/d8134157-d13c-49b3-9ec2-ef50e8ff1bf7)
+
+
+Slew_low_fall_thr
+
+![image](https://github.com/kmkalpana2001/DIGITAL-VLSI-SOC-DESIGN-AND-PLANNING/assets/165163110/cca7ece5-603a-46b4-b781-9c82b3d14f9b)
+
+
+Slew_high_fall_thr
+
+![image](https://github.com/kmkalpana2001/DIGITAL-VLSI-SOC-DESIGN-AND-PLANNING/assets/165163110/3e5dd161-ff39-4a74-89da-06a642835f14)
+
+
+Now, considering the input stimulus waveform (the first buffer's input) and the corresponding output waveform from that same buffer, thresholds are also defined for delay, analogous to slew. For this, we must identify specific rise and fall points on the waveforms. These delay thresholds are typically set at approximately 50%.
+
+in_rise_thr
+
+![image](https://github.com/kmkalpana2001/DIGITAL-VLSI-SOC-DESIGN-AND-PLANNING/assets/165163110/eb232344-b6d9-4de0-b351-9910214a8fbc)
+
+in_fall_thr , its typical value is 50%.
+
+![image](https://github.com/kmkalpana2001/DIGITAL-VLSI-SOC-DESIGN-AND-PLANNING/assets/165163110/b40bb02f-aac3-4635-9615-d7e95901aa08)
+
+out_rise_thr
+
+![image](https://github.com/kmkalpana2001/DIGITAL-VLSI-SOC-DESIGN-AND-PLANNING/assets/165163110/9e16ea11-c75e-40da-91d8-82baa271b7d8)
+
+out_fall_thr
+
+![image](https://github.com/kmkalpana2001/DIGITAL-VLSI-SOC-DESIGN-AND-PLANNING/assets/165163110/2cb0db7d-8dcb-41bb-b0d9-b2b10e8eb31b)
+
+
+### <h2 id="header-2_4_2">Propagation delay and transition time</h2>
+
+Based on these defined threshold values, we proceed to calculate further parameters such as propagation delay, current, and slews.
+
+To determine any delay, we subtract the 'out_rise_thr' time from the 'in_rise_thr' time. Using a typical value of 50%, we can observe its application on a specific waveform: Time delay = Time(out_thr) - Time(in_thr).
+
+![image](https://github.com/kmkalpana2001/DIGITAL-VLSI-SOC-DESIGN-AND-PLANNING/assets/165163110/d157a7da-02ba-44d7-9acf-90899273eb7f)
+
+In the preceding example, both in_rise_thr and out_fall_thr were set at 50%. However, if the threshold point shifts higher, the output appears before the input, resulting in an unaccepted negative delay. This negative delay arises from a poor choice of threshold point, underscoring its critical importance.
+
+![image](https://github.com/kmkalpana2001/DIGITAL-VLSI-SOC-DESIGN-AND-PLANNING/assets/165163110/6540a5e2-cf40-4202-994e-e7ff05d6d60f)
+
+Consider an alternative scenario, in the below figure
+
+![transitiontime_MIDPOINT](day%2002/transitiontime_MIDPOINT.png)
+
+Despite a correctly chosen threshold point, a negative delay can still manifest. This occurs because the output signal appears prior to the input, resulting in an unacceptable negative delay.
+
+![image](https://github.com/kmkalpana2001/DIGITAL-VLSI-SOC-DESIGN-AND-PLANNING/assets/165163110/03a0e311-2552-4a40-8345-9075f655fdee)
+
+**Transition time**=  time(slew_high_rise_thr)- time(slew_low_rise_thr)
+
+or
+
+**Transition time** = time(slew_high_fall_thr)- time(slew_low_fall_thr)
+
+Consider a waveform for illustrating slew calculation.
+
+![image](https://github.com/kmkalpana2001/DIGITAL-VLSI-SOC-DESIGN-AND-PLANNING/assets/165163110/2f7d8314-e195-48fc-98f3-b20441352242)
