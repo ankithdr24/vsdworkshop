@@ -30,7 +30,7 @@ Chip is connected to the package with the help of bond wires.
 ![image](https://github.com/kmkalpana2001/DIGITAL-VLSI-SOC-DESIGN-AND-PLANNING/assets/165163110/d3bfdac2-c95c-49dd-bdab-223a42692197)
 
 ### RISC V SoC CHIP
-![[day%2001/RISC%20SoC%20Chip.jpeg]]
+!(day%2001/RISC%20SoC%20Chip.jpeg)
 
 The central component is a **RISC SoC (System-on-Chip) chip**. This chip integrates several key functional blocks, which the image labels as "Macros" and "Foundry IPs," indicating pre-designed and validated components.
 
