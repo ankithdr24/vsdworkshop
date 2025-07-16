@@ -16,7 +16,7 @@ ii **Core:** Place where all the logic gates are fixed.
 
 iii **Die:** Present at the corner. it is the size of the entire chip.
 
-**EX. RISC-V SoC**:- Key components like SRAM, SoC, ADC, DAC, and SPI are considered foundry intellectual property (IP). The fabrication of all integrated circuits depends on foundries, which employ techniques such as deposition and lithography for chip manufacturing.
+**Eg. RISC-V SoC**:- Key components like SRAM, SoC, ADC, DAC, and SPI are considered foundry intellectual property (IP). The fabrication of all integrated circuits depends on foundries, which employ techniques such as deposition and lithography for chip manufacturing.
 
 ![image](https://github.com/kmkalpana2001/DIGITAL-VLSI-SOC-DESIGN-AND-PLANNING/assets/165163110/0900c16a-29b9-47fd-84bd-28b7249a2938)
 
