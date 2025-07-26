@@ -451,7 +451,7 @@ Let's consider the following design example for implementation. The first circui
 
 Let's introduce an additional design for implementation. Circuits of this nature are exceptionally valuable for comprehending the intricate timing analysis between different clock domains.
 
-![pinplacement1](day%2002/pinplacement1.png)
+![placement1](day%2002/placement1.png)
 
 The complete design now appears as shown below, featuring six input ports and five output ports. The intricate connectivity details among these gates are encoded using either VHDL or Verilog hardware description languages, collectively forming what is termed the 'Netlist'.
 
@@ -475,13 +475,14 @@ The floorplan is now finalized, preparing the design for the subsequent Placemen
 
 Before run the floorplanning, we required some switches for the floorplanning. these we can get from the configuration from openlane.
 
-![image](https://github.com/kmkalpana2001/DIGITAL-VLSI-SOC-DESIGN-AND-PLANNING/assets/165163110/67041b25-ee43-4864-9bce-fb0386d53641)
+![l1](lab2/l1.png)  
+
 
 Here we can see that the core utilization ratio is 50% (bydefault) and aspect ratio is 1 (bydefault). similarly other information is also given. But it is not neccessory to take these values. we need to change these value as per the given requirments also.
 
 Here FP_PDN files are set the power distribution network. These switches are set in the floorplane stage bydefault in OpenLANE.
 
-![image](https://github.com/kmkalpana2001/DIGITAL-VLSI-SOC-DESIGN-AND-PLANNING/assets/165163110/2b1281f9-b85a-4b08-b507-49c39c51c434)
+![l2](lab2/l2.png)  
 
 Here, (FP_IO MODE) 1, 0 means pin positioning is random but it is on equal distance.
 
@@ -493,13 +494,13 @@ Now we see, with this settings how floorplan run.
 
 In the run folder, we can see the connfig.tcl file. this file contains all the configuration that are taken by the flow. if we open the config.tcl file, then we can see that which are the parameters are accepted in the current flow.
 
-![image](https://github.com/kmkalpana2001/DIGITAL-VLSI-SOC-DESIGN-AND-PLANNING/assets/165163110/be2a8bf3-4857-427e-a690-5ff3241bfbd9)
+![l3](lab2/l3.png)  
 
-![image](https://github.com/kmkalpana2001/DIGITAL-VLSI-SOC-DESIGN-AND-PLANNING/assets/165163110/36985c6b-3e9f-473d-ab32-29b224cff6f1)
+![l4](lab2/l4.png)  
 
 To watch how floorplane looks, we have to go in the results. in the result, one def( design exchange formate) file is available. if we open this file, we can see all information about die area (0 0) (660685 671405), unit distance in micron (1000). it means 1 micron means 1000 databased units. so 660685 and 671405 are databased units. and if we devide this by 1000 then we can get the dimensions of chips in micrometer.
 
-![image](https://github.com/kmkalpana2001/DIGITAL-VLSI-SOC-DESIGN-AND-PLANNING/assets/165163110/cb35a72a-6fa7-402b-a0ed-8010ffdcccd3)
+![l5](lab2/l5.png)  
 
 so, the width of chip is 660.685 micrometer and height of the chip is 671.405 micrometer.
 
@@ -507,35 +508,35 @@ To see the actual layout after the flow, we have to open the magic file by addin
 
 And then after pressing the enter, Magic file will open. here we can see the layout.
 
-![image](https://github.com/kmkalpana2001/DIGITAL-VLSI-SOC-DESIGN-AND-PLANNING/assets/165163110/bc916128-b14b-4d46-af0c-296f39dafb5f)
+![l6](lab2/l6.png)  
 
 
 ### <h2 id="header-2_1_8">Review floorplan layout in Magic</h2>
 
 In the layout we can see that, input output pins are at equal distance.
 
-![image](https://github.com/kmkalpana2001/DIGITAL-VLSI-SOC-DESIGN-AND-PLANNING/assets/165163110/f02464f8-3bbc-4475-90a6-1d523ba36857)
+![l7](lab2/l7.png)  
 
 
 after selecting (To select object, first click on the object and then press 's' from keyboard. the object will hight lited. to zoom in the object, click on the object and then press 'z' and for zoom out press 'sft+z') one input pin, if we want to check the location or to know at on which layer it is available, we have to open tkcon window and type "what". it will shows all the details about that perticular pin.
 
-![image](https://github.com/kmkalpana2001/DIGITAL-VLSI-SOC-DESIGN-AND-PLANNING/assets/165163110/5dc0a65b-4216-4879-b786-e4de4319dfc4)
+![l8](lab2/l8.png)  
 
 
 so, it show that the pin is in the metal 3.similarly doing for the vertical pins, we find that this pin is at metal 2.
 
-![image](https://github.com/kmkalpana2001/DIGITAL-VLSI-SOC-DESIGN-AND-PLANNING/assets/165163110/b934b69a-5357-4b4d-a51a-e66cd352fb6c)
+![l9](lab2/l9.png)  
 
 
 Along with the side rows,the Decap cells are arranged at the border of the side rows.
 
-![image](https://github.com/kmkalpana2001/DIGITAL-VLSI-SOC-DESIGN-AND-PLANNING/assets/165163110/e5f09e25-ff25-411b-aacc-74ae3df0ae61)
+![l10](lab2/l10.png)  
 
 
 
 here we can see that first standerd cells is for buffer 1. similarly other cells are for buffer 2, AND gate etc.
 
-![image](https://github.com/kmkalpana2001/DIGITAL-VLSI-SOC-DESIGN-AND-PLANNING/assets/165163110/e0624489-5298-45cd-a08d-db2b3ec572b7)
+![l11](lab2/l11.png)  
 
 
 ## <h2 id="header-2_2">Library building and Placement</h2>
@@ -593,7 +594,7 @@ Every IC design flow mandates a series of sequential steps. Initially, Logic Syn
 
 Following Logic Synthesis is Floorplanning, where the synthesized output is imported to determine the Core and Die dimensions. Placement, the subsequent step, involves strategically positioning logic cells onto the chip to optimize initial timing. Next, Clock Tree Synthesis (CTS) ensures that clock signals reach every element simultaneously, while also guaranteeing consistent rise and fall times for each clock signal. Routing then follows a specific flow, dictated by the flip-flop characteristics. 
 
-![needftorlib_synplaceroute](day%2002/needftorlib_synplaceroute.png)
+![needforlib_synplaceroute](day%2002/needforlib_synplaceroute.png)
 
 Finally, Static Timing Analysis (STA) concludes the process by evaluating setup time, hold time, and the circuit's maximum achievable frequency. Throughout all these stages, "GATES or Cells" remain the unifying element.
 
@@ -610,11 +611,11 @@ When we run the placement, first Global placement is happens. main objective of 
 
 Now opening the Magic file to see actual view of standerd cells placement.And the actual view in the magic file is given below.
 
-![image](https://github.com/kmkalpana2001/DIGITAL-VLSI-SOC-DESIGN-AND-PLANNING/assets/165163110/d7e29ff0-f009-4c72-9129-d7662b46f8b8)
+![l13](lab2/l3.png)  
 
 If we zooom into this, we find the buffers, gates, flip flops in this.
 
-![image](https://github.com/kmkalpana2001/DIGITAL-VLSI-SOC-DESIGN-AND-PLANNING/assets/165163110/768d1fbd-c7b4-4b15-bbd5-cebd57a1c79a)
+![l14](lab2/l14.png)  
 
 
 
@@ -642,7 +643,7 @@ The inverter has to represented in form of the shape, drive strength, power char
 **Inputs DRC and LVS**
 This emphasizes that Design Rule Check (DRC) and Layout Versus Schematic (LVS) rules are key inputs from PDKs, providing the geometric and connectivity constraints for valid cell layouts.
 
-![celldesign_drc_lvs](day%2002/celldesign_drc_lvs.png)
+![celldesign_drc_lv.png](day%2002/celldesign_drc_lv.png)
 
 **Inputs SPICE Models**
 This details how "SPICE model parameters" from PDKs provide the complex mathematical equations and values (like threshold voltage, current in linear/saturation regions) necessary for accurate circuit simulation.
@@ -652,7 +653,7 @@ This details how "SPICE model parameters" from PDKs provide the complex mathemat
 **Inputs Library and user-defined Specs**
 There are inputs like height, supply voltage, pin-location, gate length, metal layers etc.
 
-![celldesign_libnuser_height'](day%2002/celldesign_libnuser_height'.png)
+![celldesign_libnuser_height](day%2002/celldesign_libnuser_height.png)
 
 The above figure highlights how "Cell-height" is a crucial input from the Process Design Kits (PDKs) in the cell design flow, influencing the overall vertical dimension of the standard cells and IP blocks.
 
