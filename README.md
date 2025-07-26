@@ -594,7 +594,7 @@ Every IC design flow mandates a series of sequential steps. Initially, Logic Syn
 
 Following Logic Synthesis is Floorplanning, where the synthesized output is imported to determine the Core and Die dimensions. Placement, the subsequent step, involves strategically positioning logic cells onto the chip to optimize initial timing. Next, Clock Tree Synthesis (CTS) ensures that clock signals reach every element simultaneously, while also guaranteeing consistent rise and fall times for each clock signal. Routing then follows a specific flow, dictated by the flip-flop characteristics. 
 
-![needftorlib_synplaceroute](day%2002/needforlib_synplaceroute.png)
+![needftorlib_synplaceroute](day%2002/needftorlib_synplaceroute.png)
 
 Finally, Static Timing Analysis (STA) concludes the process by evaluating setup time, hold time, and the circuit's maximum achievable frequency. Throughout all these stages, "GATES or Cells" remain the unifying element.
 
@@ -643,7 +643,7 @@ The inverter has to represented in form of the shape, drive strength, power char
 **Inputs DRC and LVS**
 This emphasizes that Design Rule Check (DRC) and Layout Versus Schematic (LVS) rules are key inputs from PDKs, providing the geometric and connectivity constraints for valid cell layouts.
 
-![celldesign_drc_lv.png](day%2002/celldesign_drc_lv.png)
+![celldesign_drc_lvs.png](day%2002/celldesign_drc_lvs.png)
 
 **Inputs SPICE Models**
 This details how "SPICE model parameters" from PDKs provide the complex mathematical equations and values (like threshold voltage, current in linear/saturation regions) necessary for accurate circuit simulation.
